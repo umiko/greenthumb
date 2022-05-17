@@ -1,0 +1,21 @@
+version: "3.8"
+# Overrides for local development only, binds local directory to the node container and starts nodemon, these are automatically applied
+services:
+  node:
+    working_dir: /usr/src/app
+    entrypoint: sh -c "npm install --include=dev && npm run dev"
+    volumes:
+      - ./backend:/usr/src/app
+  # Make db reachable from the outside, in production not necessary due to docker compose network management
+  mongo:
+    ports:
+      - "27017:27017"
+  vue:
+    build: 
+      context: ./frontend/
+      target: 'develop-stage'
+    volumes: 
+      - ./frontend:/app
+    ports:
+      - "8080:8080"
+    entrypoint: sh -c "yarn install && yarn serve"
